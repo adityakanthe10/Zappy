@@ -1,5 +1,5 @@
 {
-  "name": "Zappy",
+  "name": "zappy",
   "private": true,
   "scripts": {
     "build": "turbo run build",
@@ -12,7 +12,9 @@
     "@types/bcrypt": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/next": "^8.0.7",
+    "bootstrap": "^5.3.5",
     "prettier": "^3.5.3",
+    "sass": "^1.87.0",
     "turbo": "^2.5.0",
     "typescript": "5.8.2"
   },
@@ -27,6 +29,8 @@
   "dependencies": {
     "@prisma/client": "^6.6.0",
     "@reduxjs/toolkit": "^2.7.0",
+    "@types/aos": "^3.0.7",
+    "aos": "^2.3.4",
     "bcrypt": "^5.1.1",
     "jsonwebtoken": "^9.0.2",
     "prisma": "^6.6.0",
