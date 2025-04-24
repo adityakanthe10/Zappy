@@ -58,6 +58,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: error.errors[0].message }, { status: 400 });
     }
     console.error("Server error:", error);
-    return NextResponse.json({ error: "Server error, please try again." }, { status: 500 });
+    return NextResponse.json({ error: `${error} Server error, please try again.`,}, { status: 500 });
   }
 }
