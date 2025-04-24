@@ -1,22 +1,22 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAppDispatch, useAppSelector } from '../lib/store';
-import { loginUser } from '../lib/store/features/auth/authThunk';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAppDispatch, useAppSelector } from "../lib/store";
+import { loginUser } from "../lib/store/features/auth/authThunk";
 
 export default function LoginForm() {
   /* ---------------------------------------------------------------- */
   /* local component state                                            */
   /* ---------------------------------------------------------------- */
-  const [email,    setEmail]    = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   /* ---------------------------------------------------------------- */
   /* redux + routing helpers                                          */
   /* ---------------------------------------------------------------- */
-  const dispatch   = useAppDispatch();
-  const router     = useRouter();
+  const dispatch = useAppDispatch();
+  const router = useRouter();
   const { status, error } = useAppSelector((s) => s.auth);
 
   /* ---------------------------------------------------------------- */
@@ -26,10 +26,13 @@ export default function LoginForm() {
     e.preventDefault();
 
     const res = await dispatch(loginUser({ email, password }));
+    console.log("res",res)
 
     if (loginUser.fulfilled.match(res)) {
       // token + role are now in Redux and localStorage (slice does that)
-      router.replace(res.payload.role === 'CUSTOMER' ? '/customer' : '/partner');
+      router.replace(
+        res.payload.role === "CUSTOMER" ? "/customer" : "/partner"
+      );
     }
   };
 
@@ -41,7 +44,9 @@ export default function LoginForm() {
       <div className="container mx-auto max-w-lg">
         <div className="bg-white shadow-lg rounded-lg p-10">
           <h2 className="text-2xl font-bold text-center mb-2">Login</h2>
-          <p className="text-center text-gray-600 mb-8">Dive back in for instant essentials</p>
+          <p className="text-center text-gray-600 mb-8">
+            Dive back in for instant essentials
+          </p>
 
           <form onSubmit={handleSubmit} className="space-y-6 max-w-md mx-auto">
             {/* email */}
@@ -71,10 +76,10 @@ export default function LoginForm() {
             {error && <p className="text-red-500 text-center">{error}</p>}
 
             <button
-              disabled={status === 'loading'}
+              disabled={status === "loading"}
               className="w-full py-3 bg-black text-white rounded-lg disabled:opacity-60"
             >
-              {status === 'loading' ? 'Signing in…' : 'Login'}
+              {status === "loading" ? "Signing in…" : "Login"}
             </button>
           </form>
         </div>
