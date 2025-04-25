@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "../lib/store";
 import { loginUser } from "../lib/store/features/auth/authThunk";
+import Link from "next/link";
 
 export default function LoginForm() {
   /* ---------------------------------------------------------------- */
@@ -26,7 +27,7 @@ export default function LoginForm() {
     e.preventDefault();
 
     const res = await dispatch(loginUser({ email, password }));
-    console.log("res",res)
+    console.log("res", res);
 
     if (loginUser.fulfilled.match(res)) {
       // token + role are now in Redux and localStorage (slice does that)
@@ -36,16 +37,16 @@ export default function LoginForm() {
     }
   };
 
-  /* ---------------------------------------------------------------- */
-  /* UI                                                               */
-  /* ---------------------------------------------------------------- */
   return (
     <section className="pt-20 pb-20">
       <div className="container mx-auto max-w-lg">
         <div className="bg-white shadow-lg rounded-lg p-10">
           <h2 className="text-2xl font-bold text-center mb-2">Login</h2>
           <p className="text-center text-gray-600 mb-8">
-            Dive back in for instant essentials
+            Don&apos;t have an account?{" "}
+            <span className="text-blue-600">
+              <Link href="register">Signup</Link>
+            </span>
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-6 max-w-md mx-auto">

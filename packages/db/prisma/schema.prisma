@@ -39,6 +39,7 @@ model Order {
 }
 
 enum Role {
+  ADMIN
   CUSTOMER
   DELIVERY
 }
