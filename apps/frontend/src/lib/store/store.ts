@@ -1,12 +1,12 @@
 // store.ts
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './features/auth/authslice';
-// import userReducer from './features/auth/authslice';
+import orderReducer from './features/orders/orderSlice';
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
-    // user: userReducer,
+    order: orderReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });

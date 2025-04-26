@@ -71,7 +71,6 @@ export async function POST(req: NextRequest) {
       process.env.JWT_SECRET,
       { expiresIn: "2h" }
     );
-    // -------------------------------------
 
     // Set response with the role and JWT token
     const response = NextResponse.json(

@@ -9,15 +9,13 @@ interface DecodedToken {
 }
 
 export async function GET(req: NextRequest) {
-  const authHeader = req.headers.get("authorization");
-
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return NextResponse.json({ error: "No token provided." }, { status: 401 });
-  }
-
-  const token = authHeader.split(" ")[1];
-
   try {
+    const token = req.cookies.get("token")?.value;
+
+    if (!token) {
+      return NextResponse.json({ error: "No token provided." }, { status: 401 });
+    }
+
     if (!process.env.JWT_SECRET) {
       throw new Error("JWT_SECRET is not defined in environment variables.");
     }
@@ -32,10 +30,11 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "User not found." }, { status: 404 });
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, ...userWithoutPassword } = user;
+    // Remove password safely without destructuring
+    const userCopy: Omit<typeof user, "password"> & { password?: string } = { ...user };
+    delete userCopy.password;
 
-    return NextResponse.json({ user: userWithoutPassword }, { status: 200 });
+    return NextResponse.json({ user: userCopy }, { status: 200 });
   } catch (error) {
     console.error("Token error:", error);
     return NextResponse.json(

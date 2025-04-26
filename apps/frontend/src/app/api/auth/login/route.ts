@@ -18,7 +18,10 @@ export async function POST(req: NextRequest) {
     // Find user in the database
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user)
-      return NextResponse.json({ error: "User not found." }, { status: 404 });
+      return NextResponse.json(
+        { error: "User not found. Signup Please" },
+        { status: 404 }
+      );
 
     // Compare provided password with stored hash
     const ok = await bcrypt.compare(password, user.password);
@@ -36,25 +39,31 @@ export async function POST(req: NextRequest) {
     const role = user.role as "CUSTOMER" | "DELIVERY" | "ADMIN";
 
     // Generate JWT token with a 2-hour expiration
-    const token = jwt.sign(
-      { userId: user.id, role },
-      process.env.JWT_SECRET,
-      { expiresIn: "2h" }
-    );
+    const token = jwt.sign({ userId: user.id, role }, process.env.JWT_SECRET, {
+      expiresIn: "2h",
+    });
 
     // Set cookies for token and role, with 2 hours expiration
     const res = NextResponse.json(
       {
         message: "Login successful",
-        token,        // JWT token
-        role,         // User role (can be CUSTOMER, DELIVERY, or ADMIN)
+        token, // JWT token
+        role, // User role (can be CUSTOMER, DELIVERY, or ADMIN)
       },
       { status: 200 }
     );
 
     // Set cookies using `NextResponse.cookies.set`
-    res.cookies.set('token', token, { httpOnly: true, maxAge: 2 * 60 * 60 * 1000, path: '/' });
-    res.cookies.set('role', role, { httpOnly: true, maxAge: 2 * 60 * 60 * 1000, path: '/' });
+    res.cookies.set("token", token, {
+      httpOnly: true,
+      maxAge: 2 * 60 * 60 * 1000,
+      path: "/",
+    });
+    res.cookies.set("role", role, {
+      httpOnly: true,
+      maxAge: 2 * 60 * 60 * 1000,
+      path: "/",
+    });
 
     return res;
   } catch (err) {
