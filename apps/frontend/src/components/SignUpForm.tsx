@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAppDispatch, useAppSelector } from "../lib/store/index";
+import { useAppDispatch, useAppSelector } from "../lib/store/store";
 import { registerUser } from "../lib/store/features/auth/authThunk";
 import { z } from "zod";
 import { emailValidator, passwordValidator } from "../lib/validators";

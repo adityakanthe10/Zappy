@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAppDispatch, useAppSelector } from "../lib/store";
+import { useAppDispatch, useAppSelector } from "../lib/store/store";
 import { loginUser } from "../lib/store/features/auth/authThunk";
 import Link from "next/link";
 

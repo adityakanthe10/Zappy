@@ -1,6 +1,6 @@
 // useAuth.ts
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../index';
+import { RootState } from '../store';
 import { logout } from '../features/auth/authslice';
 
 export const useAuth = () => {

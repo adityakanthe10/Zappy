@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createOrder, OrderResponse } from "./orderThunk";
 
 // Define the Order interface
-interface Order {
+export interface Order {
   id: string;
   product: string;
   quantity: number;

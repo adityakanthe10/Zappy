@@ -28,11 +28,13 @@ export default function OrderPage() {
       toast.error("Please fill all fields correctly");
       return;
     }
-    const result = await dispatch(createOrder({ product, quantity: Number(quantity), location }));
-
+    const result = await dispatch(
+      createOrder({ product, quantity: Number(quantity), location })
+    );
+    console.log("result", result);
     if (createOrder.fulfilled.match(result)) {
       toast.success("Order placed successfully!");
-      router.push("/customer/order/list");
+      router.push(`/customer/order/list/${result.payload.order.customerId}`);
     } else {
       toast.error("Failed to place order.");
     }
