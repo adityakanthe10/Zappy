@@ -24,7 +24,7 @@ const LandingNavbar = () => {
               login
             </button>
           </Link>
-          <Link href="/signup">
+          <Link href="/register">
             <button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md">
               Signup
             </button>
@@ -49,7 +49,7 @@ const LandingNavbar = () => {
           >
             Login
           </Link>
-          <Link href="/signup">
+          <Link href="/register">
             <button className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
               Signup
             </button>

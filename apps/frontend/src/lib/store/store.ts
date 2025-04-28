@@ -3,12 +3,14 @@ import { useDispatch, TypedUseSelectorHook, useSelector } from "react-redux";
 import authReducer from './features/auth/authslice';
 import orderReducer from './features/orders/orderSlice';
 import fetchOrderReducer from './features/orders/fetchOrderSlice';
+import  fetchPendingOrdersReducer  from './features/orders/fetchPendingOrderSlice';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     order: orderReducer,
     fetchOrders: fetchOrderReducer,
+    fetchPendingOrders: fetchPendingOrdersReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });

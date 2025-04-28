@@ -2,20 +2,18 @@
 
 import { useEffect } from "react";
 import { useParams } from "next/navigation";
-import { useAppDispatch, useAppSelector } from "../../lib/store/store";
-import { fetchOrders } from "../../lib/store/features/orders/fetchOrderThunk";
-import type { Order } from "../../lib/store/features/orders/orderSlice";
+import { useAppDispatch, useAppSelector } from "../../../lib/store/store";
+import { fetchOrders } from "../../../lib/store/features/orders/fetchOrderThunk";
+import type { Order } from "../../../lib/store/features/orders/orderSlice";
 
 export default function OrderListPage() {
   const { id } = useParams();
   const dispatch = useAppDispatch();
+
+  // Proper type assertion for orders, status, and error
   const { orders, status, error } = useAppSelector(
     (state) => state.fetchOrders
-  ) as {
-    orders: Order[];
-    status: string;
-    error: string | null;
-  };
+  ) as { orders: Order[]; status: string; error: string | null };
 
   useEffect(() => {
     if (id) {
@@ -49,7 +47,7 @@ export default function OrderListPage() {
               </tr>
             </thead>
             <tbody>
-              {orders.map((order: Order) => (
+              {orders.map((order) => (
                 <tr key={order.id} className="hover:bg-gray-50">
                   <td className="p-2 border">{order.product}</td>
                   <td className="p-2 border text-center">{order.quantity}</td>

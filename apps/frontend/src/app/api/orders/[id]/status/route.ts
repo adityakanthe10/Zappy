@@ -1,10 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
-import jwt from 'jsonwebtoken';
-import { prisma } from '@repo/db';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from "next/server";
+import jwt from "jsonwebtoken";
+import { prisma } from "@repo/db";
+import { z } from "zod";
+import {getSocket} from "../../../../../../server/server"
 
 const Body = z.object({
-  status: z.enum(['ACCEPTED', 'OUT_FOR_DELIVERY', 'DELIVERED']),
+  status: z.enum(["ACCEPTED", "OUT_FOR_DELIVERY", "DELIVERED"]),
 });
 
 // interface Context {
@@ -18,26 +19,35 @@ interface JwtPayload {
   role: string;
 }
 
-export async function PUT(req: NextRequest, {params}:{params:Promise<{id:string}>}) {
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   const { id } = await params;
 
-  const auth = req.headers.get('authorization');
-  if (!auth?.startsWith('Bearer ')) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const auth = req.headers.get("authorization");
+  if (!auth?.startsWith("Bearer ")) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   let userId: string;
   let role: string;
   try {
-    const decoded = jwt.verify(auth.split(' ')[1], process.env.JWT_SECRET!) as JwtPayload;
+    const decoded = jwt.verify(
+      auth.split(" ")[1],
+      process.env.JWT_SECRET!
+    ) as JwtPayload;
     userId = decoded.userId;
     role = decoded.role;
   } catch {
-    return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+    return NextResponse.json({ error: "Invalid token" }, { status: 401 });
   }
 
-  if (role !== 'DELIVERY') {
-    return NextResponse.json({ error: 'Only delivery partners allowed' }, { status: 403 });
+  if (role !== "DELIVERY") {
+    return NextResponse.json(
+      { error: "Only delivery partners allowed" },
+      { status: 403 }
+    );
   }
 
   const body = await req.json();
@@ -53,6 +63,10 @@ export async function PUT(req: NextRequest, {params}:{params:Promise<{id:string}
       deliveryPartner: { connect: { id: userId } },
     },
   });
+
+  // After updating in database
+  const io = getSocket();
+  io.emit("orderStatusUpdated", { orderId: id, newStatus: parsed.data.status });
 
   return NextResponse.json({ order }, { status: 200 });
 }

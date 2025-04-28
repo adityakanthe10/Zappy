@@ -14,7 +14,7 @@ export default function Home() {
         <p className="text-lg mb-8 text-gray-600">
           Manage your orders efficiently with our powerful platform.
         </p>
-        <Link href="/login">
+        <Link href="/register">
         <button
           className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700"
         >
