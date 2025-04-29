@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { prisma } from "@repo/db";
 import { z } from "zod";
-import {getSocket} from "../../../../../../server/server"
+import {getSocket} from "../../../../../../../server/src/services/socket";
 
 const Body = z.object({
   status: z.enum(["ACCEPTED", "OUT_FOR_DELIVERY", "DELIVERED"]),

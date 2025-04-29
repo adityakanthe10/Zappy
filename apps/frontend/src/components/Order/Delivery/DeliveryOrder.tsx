@@ -4,10 +4,10 @@ import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../lib/store/store";
 import { fetchPendingOrders } from "../../../lib/store/features/orders/fetchPendingThunk";
 import axios from "axios";
-import io from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 
-// Socket.io connection setup
-const socket = io("http://localhost:3000"); // Ensure your backend URL matches
+// // Socket.io connection setup
+// const socket = io("http://localhost:3000"); // Ensure your backend URL matches
 
 const PendingOrders = () => {
   const dispatch = useAppDispatch();
@@ -15,6 +15,16 @@ const PendingOrders = () => {
     (state) => state.fetchPendingOrders
   );
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
+ const [socket, setSocket] = useState<Socket | null>(null);
+
+ useEffect(()=>{
+  const newSocket =io("http://localhost:8000")
+  setSocket(newSocket);
+  return () =>{
+    newSocket.disconnect();
+  } 
+ },[])
+
 
   // Fetch orders on mount
   useEffect(() => {
@@ -28,7 +38,7 @@ const PendingOrders = () => {
       // Make API call to update order status
       await axios.put(`/api/orders/${orderId}/status`, { status: newStatus });
       // Emit the status update through socket.io
-      socket.emit("orderStatusUpdated", { orderId, status: newStatus });
+      socket?.emit("orderStatusUpdated", { orderId, status: newStatus });
       dispatch(fetchPendingOrders()); // refetch pending orders
     } catch (error) {
       console.error("Error updating status:", error);
