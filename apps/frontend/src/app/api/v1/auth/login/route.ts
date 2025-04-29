@@ -58,11 +58,15 @@ export async function POST(req: NextRequest) {
       httpOnly: true,
       maxAge: 2 * 60 * 60 * 1000,
       path: "/",
+      sameSite: "none",  // Ensure cookies can be shared across different origins
+      secure: process.env.NODE_ENV === "production"
     });
     res.cookies.set("role", role, {
       httpOnly: true,
       maxAge: 2 * 60 * 60 * 1000,
       path: "/",
+      sameSite: "none",  // Ensure cookies can be shared across different origins
+      secure: process.env.NODE_ENV === "production", 
     });
 
     return res;

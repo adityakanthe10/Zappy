@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { prisma } from "@repo/db";
 import { z } from "zod";
-import {getSocket} from "../../../../../../../server/src/services/socket";
+import { getSocket } from "../../../../../../../../../server/src/services/socket";
+import { cookies } from "next/headers";
 
 const Body = z.object({
   status: z.enum(["ACCEPTED", "OUT_FOR_DELIVERY", "DELIVERED"]),
@@ -25,21 +26,22 @@ export async function PUT(
 ) {
   const { id } = await params;
 
-  const auth = req.headers.get("authorization");
-  if (!auth?.startsWith("Bearer ")) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+
+  if (!token) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-
   let userId: string;
   let role: string;
   try {
-    const decoded = jwt.verify(
-      auth.split(" ")[1],
-      process.env.JWT_SECRET!
-    ) as JwtPayload;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
     userId = decoded.userId;
     role = decoded.role;
-  } catch {
+  } catch (err) {
+    if (err instanceof jwt.TokenExpiredError) {
+      return NextResponse.json({ error: "Token expired" }, { status: 401 });
+    }
     return NextResponse.json({ error: "Invalid token" }, { status: 401 });
   }
 

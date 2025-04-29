@@ -22,7 +22,7 @@ export const createOrder = createAsyncThunk<
   "order/createOrder",
   async (orderData, { rejectWithValue }) => {
     try {
-      const response = await axios.post("/api/orders",
+      const response = await axios.post("/api/v1/orders/customer",
         orderData
       );
       console.log("response",response)

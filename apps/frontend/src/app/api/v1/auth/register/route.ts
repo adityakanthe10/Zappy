@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { prisma } from "@repo/db";
 import { NextRequest, NextResponse } from "next/server";
-import { emailValidator, passwordValidator } from "../../../../lib/validators";
+import { emailValidator, passwordValidator } from "../../../../../lib/validators";
 
 const registerSchema = z.object({
   username: z.string().min(1, "Username is required"),

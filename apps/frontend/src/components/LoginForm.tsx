@@ -7,22 +7,18 @@ import { loginUser } from "../lib/store/features/auth/authThunk";
 import Link from "next/link";
 
 export default function LoginForm() {
-  /* ---------------------------------------------------------------- */
-  /* local component state                                            */
-  /* ---------------------------------------------------------------- */
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  /* ---------------------------------------------------------------- */
-  /* redux + routing helpers                                          */
-  /* ---------------------------------------------------------------- */
+
+  /* redux + routing helpers*/
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { status, error } = useAppSelector((s) => s.auth);
 
-  /* ---------------------------------------------------------------- */
-  /* submit handler                                                   */
-  /* ---------------------------------------------------------------- */
+
+  /* submit handler*/
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -32,7 +28,7 @@ export default function LoginForm() {
     if (loginUser.fulfilled.match(res)) {
       // token + role are now in Redux and localStorage (slice does that)
       router.replace(
-        res.payload.role === "CUSTOMER" ? "/customer" : "/partner"
+        res.payload.role === "CUSTOMER" ? "/customer/order" : "/delivery/dashboard"
       );
     }
   };

@@ -47,7 +47,7 @@ export default function SignUpForm() {
         // Save token and role to cookies (handled in the slice)
         // Redirect based on role
         const targetRoute =
-          parsed.data.role === "CUSTOMER" ? "/customer" : "/partner";
+          parsed.data.role === "CUSTOMER" ? "/customer/order" : "/delivery/dashboard";
         router.replace(targetRoute);
       }
     } catch (err) {
@@ -63,7 +63,10 @@ export default function SignUpForm() {
             Create account
           </h2>
           <p className="text-center text-gray-600 mb-8">
-            Already have an account?<span className="text-blue-600"><Link href="login">Login</Link></span>
+            Already have an account?
+            <span className="text-blue-600">
+              <Link href="login">Login</Link>
+            </span>
           </p>
 
           <form className="space-y-6" onSubmit={handleSubmit}>

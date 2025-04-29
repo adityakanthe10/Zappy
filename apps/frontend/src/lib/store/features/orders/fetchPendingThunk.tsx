@@ -24,7 +24,7 @@ export const fetchPendingOrders = createAsyncThunk<
   void // No parameters are needed
 >("orders/fetchPendingOrders", async (_, { rejectWithValue }) => {
   try {
-    const response = await axios.get("/api/orders/pending");
+    const response = await axios.get("/api/v1/orders/delivery/pending");
     return response.data;
   } catch (error: unknown) {
     if (axios.isAxiosError(error) && error.response) {

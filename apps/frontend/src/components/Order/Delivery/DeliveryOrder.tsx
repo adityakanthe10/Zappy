@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "../../../lib/store/store";
 import { fetchPendingOrders } from "../../../lib/store/features/orders/fetchPendingThunk";
 import axios from "axios";
@@ -10,36 +11,46 @@ import { io, Socket } from "socket.io-client";
 // const socket = io("http://localhost:3000"); // Ensure your backend URL matches
 
 const PendingOrders = () => {
+  const router = useRouter();
   const dispatch = useAppDispatch();
   const { orders, status, error } = useAppSelector(
     (state) => state.fetchPendingOrders
   );
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
- const [socket, setSocket] = useState<Socket | null>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
 
- useEffect(()=>{
-  const newSocket =io("http://localhost:8000")
-  setSocket(newSocket);
-  return () =>{
-    newSocket.disconnect();
-  } 
- },[])
-
+  useEffect(() => {
+    const newSocket = io("http://localhost:8000");
+    setSocket(newSocket);
+    return () => {
+      newSocket.disconnect();
+    };
+  }, []);
 
   // Fetch orders on mount
   useEffect(() => {
     dispatch(fetchPendingOrders());
   }, [dispatch]);
+  console.log("Fetched Orders", orders);
 
   // Handle status change with error handling and refetching orders
   const handleStatusChange = async (orderId: string, newStatus: string) => {
     setUpdatingOrderId(orderId);
     try {
       // Make API call to update order status
-      await axios.put(`/api/orders/${orderId}/status`, { status: newStatus });
+      await axios.put(
+        `/api/v1/orders/delivery/${orderId}/status`,
+        { status: newStatus },
+        {
+          withCredentials: true, // 🔑 this allows cookies to be sent
+        }
+      );
       // Emit the status update through socket.io
       socket?.emit("orderStatusUpdated", { orderId, status: newStatus });
       dispatch(fetchPendingOrders()); // refetch pending orders
+
+      router.push("/delivery/update")
+
     } catch (error) {
       console.error("Error updating status:", error);
     } finally {
@@ -50,12 +61,8 @@ const PendingOrders = () => {
   // Return the next possible statuses based on the current order status
   const getNextStatusOptions = (currentStatus: string) => {
     switch (currentStatus) {
-      case "Pending":
-        return ["Accepted", "Out for Delivery", "Delivered"];
-      case "Accepted":
-        return ["Out for Delivery", "Delivered"];
-      case "Out for Delivery":
-        return ["Delivered"];
+      case "PENDING":
+        return ["ACCEPTED"];
       default:
         return [];
     }
