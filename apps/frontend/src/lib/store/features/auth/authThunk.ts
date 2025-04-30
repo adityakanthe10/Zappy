@@ -19,7 +19,7 @@ export const loginUser = createAsyncThunk<
   LoginResponse,
   { email: string; password: string }
 >("auth/loginUser", async ({ email, password }) => {
-  const response = await axios.post("http://localhost:3000/api/v1/auth/login", {
+  const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/v1/auth/login`, {
     email,
     password,
   });
@@ -35,7 +35,7 @@ export const registerUser = createAsyncThunk<
   async ({ username, email, password, role }, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/v1/auth/register",
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/register`,
         {
           username,
           email,

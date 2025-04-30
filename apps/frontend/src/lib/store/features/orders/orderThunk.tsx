@@ -22,7 +22,7 @@ export const createOrder = createAsyncThunk<
   "order/createOrder",
   async (orderData, { rejectWithValue }) => {
     try {
-      const response = await axios.post("/api/v1/orders/customer",
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/orders/customer`,
         orderData
       );
       console.log("response",response)

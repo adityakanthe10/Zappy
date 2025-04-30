@@ -1,0 +1,28 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend.Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:3000
+      - NEXT_PUBLIC_WS_URL=ws://localhost:8000
+    volumes:
+      - .:/app
+    working_dir: /app/apps/frontend
+    command: npm start
+
+  backend:
+    build:
+      context: .
+      dockerfile: docker/server.Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=${DATABASE_URL}
+    volumes:
+      - .:/app
+    working_dir: /app/apps/server
+    command: node dist/index.js

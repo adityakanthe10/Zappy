@@ -26,7 +26,7 @@ export const fetchOrders = createAsyncThunk<
   "order/fetchOrders",
   async ({ id }, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`/api/v1/orders/customer/${id}`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/orders/customer/${id}`);
       console.log("response", response);
       return response.data;
     } catch (error: unknown) {
