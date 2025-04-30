@@ -1,17 +1,15 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "../../../lib/store/store";
 import { fetchPendingOrders } from "../../../lib/store/features/orders/fetchPendingThunk";
 import axios from "axios";
 import { io, Socket } from "socket.io-client";
-
-// // Socket.io connection setup
-// const socket = io("http://localhost:3000"); // Ensure your backend URL matches
+import { updateOrderStatus } from "../../../lib/store/features/orders/fetchPendingOrderSlice";
 
 const PendingOrders = () => {
-  const router = useRouter();
+  // const router = useRouter();
   const dispatch = useAppDispatch();
   const { orders, status, error } = useAppSelector(
     (state) => state.fetchPendingOrders
@@ -19,56 +17,60 @@ const PendingOrders = () => {
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
   const [socket, setSocket] = useState<Socket | null>(null);
 
+  // Initialize socket connection
   useEffect(() => {
     const newSocket = io("http://localhost:8000");
     setSocket(newSocket);
+
+    newSocket.on("orderStatusUpdated", (data) => {
+      dispatch(updateOrderStatus({ orderId: data.orderId, status: data.status }));
+    });
+
     return () => {
       newSocket.disconnect();
     };
-  }, []);
+  }, [dispatch]);
 
   // Fetch orders on mount
   useEffect(() => {
     dispatch(fetchPendingOrders());
   }, [dispatch]);
-  console.log("Fetched Orders", orders);
 
-  // Handle status change with error handling and refetching orders
-  const handleStatusChange = async (orderId: string, newStatus: string) => {
+  const handleStatusChange = async (orderId: string, newStatus: string, customerId: string) => {
     setUpdatingOrderId(orderId);
     try {
-      // Make API call to update order status
       await axios.put(
         `/api/v1/orders/delivery/${orderId}/status`,
         { status: newStatus },
-        {
-          withCredentials: true, // 🔑 this allows cookies to be sent
-        }
+        { withCredentials: true }
       );
-      // Emit the status update through socket.io
-      socket?.emit("orderStatusUpdated", { orderId, status: newStatus });
-      dispatch(fetchPendingOrders()); // refetch pending orders
 
-      router.push("/delivery/update")
+      if (socket) {
+        socket.emit("orderStatusUpdated", { orderId, status: newStatus, customerId });
+      }
 
+      dispatch(fetchPendingOrders());
+      // router.push("/delivery/update"); // Only use if necessary
     } catch (error) {
       console.error("Error updating status:", error);
     } finally {
-      setUpdatingOrderId(null); // Reset updating state
+      setUpdatingOrderId(null);
     }
   };
 
-  // Return the next possible statuses based on the current order status
   const getNextStatusOptions = (currentStatus: string) => {
     switch (currentStatus) {
       case "PENDING":
         return ["ACCEPTED"];
+      case "ACCEPTED":
+        return ["OUT_FOR_DELIVERY"];
+      case "OUT_FOR_DELIVERY":
+        return ["DELIVERED"];
       default:
         return [];
     }
   };
 
-  // Render loading or error state
   if (status === "loading") return <div>Loading...</div>;
   if (status === "failed") return <div>Error: {error}</div>;
 
@@ -94,27 +96,23 @@ const PendingOrders = () => {
                 <td className="py-2 px-4 border-b">{order.location}</td>
                 <td className="py-2 px-4 border-b">{order.status}</td>
                 <td className="py-2 px-4 border-b">
-                  {order.status === "Delivered" ? (
-                    <span className="text-green-500 font-semibold">
-                      Delivered
-                    </span>
+                  {order.status === "DELIVERED" ? (
+                    <span className="text-green-500 font-semibold">Delivered</span>
                   ) : (
                     <select
                       value=""
                       onChange={(e) =>
-                        handleStatusChange(order.id, e.target.value)
+                        handleStatusChange(order.id, e.target.value, order.customerId)
                       }
                       className="border p-1 rounded"
                       disabled={updatingOrderId === order.id}
                     >
                       <option value="">Update Status</option>
-                      {getNextStatusOptions(order.status).map(
-                        (statusOption) => (
-                          <option key={statusOption} value={statusOption}>
-                            {statusOption}
-                          </option>
-                        )
-                      )}
+                      {getNextStatusOptions(order.status).map((statusOption) => (
+                        <option key={statusOption} value={statusOption}>
+                          {statusOption}
+                        </option>
+                      ))}
                     </select>
                   )}
                 </td>

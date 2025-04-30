@@ -1,10 +1,12 @@
+// components/OrderListPage.tsx
 "use client";
-
 import { useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "../../../lib/store/store";
 import { fetchOrders } from "../../../lib/store/features/orders/fetchOrderThunk";
+import { setOrderStatus } from "../../../lib/store/features/orders/fetchOrderSlice"; // Import the setOrderStatus action
 import type { Order } from "../../../lib/store/features/orders/orderSlice";
+import { io } from "socket.io-client";
 
 export default function OrderListPage() {
   const { id } = useParams();
@@ -21,7 +23,27 @@ export default function OrderListPage() {
     if (id) {
       dispatch(fetchOrders({ id: id as string }));
     }
-  }, [dispatch, id]);
+  }, [id, dispatch]);
+
+  useEffect(() => {
+    const socket = io("http://localhost:8000");
+
+    // Join the user's room on connection
+    if (id) {
+      socket.emit("joinUserRoom", id);
+    }
+
+    socket.on("orderStatusUpdated", ({ orderId, status }) => {
+      console.log("Received order status update", orderId, status);
+
+      // Dispatch the setOrderStatus action to update the status of the specific order
+      dispatch(setOrderStatus({ orderId, status }));
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [id, dispatch]);
 
   if (status === "loading") {
     return <div className="text-center mt-10">Loading Orders...</div>;

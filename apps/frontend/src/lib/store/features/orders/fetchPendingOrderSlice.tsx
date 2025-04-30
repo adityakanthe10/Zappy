@@ -21,7 +21,13 @@ const initialState: PendingOrdersState = {
 const fetchPendingOrdersSlice = createSlice({
   name: "pendingOrders",
   initialState,
-  reducers: {},
+  reducers: { updateOrderStatus: (state, action: PayloadAction<{ orderId: string; status: string }>) => {
+    const { orderId, status } = action.payload;
+    const order = state.orders.find((o) => o.id === orderId);
+    if (order) {
+      order.status = status;
+    }
+  },},
   extraReducers: (builder) => {
     builder
       .addCase(fetchPendingOrders.pending, (state) => {
@@ -48,3 +54,5 @@ const fetchPendingOrdersSlice = createSlice({
 
 // Export reducer
 export default fetchPendingOrdersSlice.reducer;
+export const { updateOrderStatus } = fetchPendingOrdersSlice.actions;
+

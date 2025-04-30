@@ -21,7 +21,16 @@ const initialState: OrderState = {
 const fetchOrderSlice = createSlice({
   name: "order",
   initialState,
-  reducers: {},
+  reducers: {
+    // This action will be called when an order status changes via WebSocket
+    setOrderStatus: (state, action: PayloadAction<{ orderId: string; status: string }>) => {
+      const { orderId, status } = action.payload;
+      const order = state.orders.find(order => order.id === orderId);
+      if (order) {
+        order.status = status; // Update the order status
+      }
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchOrders.pending, (state) => {
@@ -44,5 +53,6 @@ const fetchOrderSlice = createSlice({
   },
 });
 
-// Export reducer
+// Export the setOrderStatus action and the reducer
+export const { setOrderStatus } = fetchOrderSlice.actions;
 export default fetchOrderSlice.reducer;
