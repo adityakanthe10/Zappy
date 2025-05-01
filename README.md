@@ -1,84 +1,148 @@
-# Turborepo starter
+# Zappy – Quick Commerce & Delivery Tracking System
 
-This Turborepo starter is maintained by the Turborepo core team.
+## Overview
 
-## Using this example
+Zappy is a full-stack web application that simulates a **Quick Commerce Order & Delivery Tracking System**, built using **Next.js**, **Node.js**, **PostgreSQL**, and **Socket.io**. It enables two roles:
 
-Run the following command:
+- **Customers** can place orders and track their status in real time.
+- **Delivery Partners** can view pending orders, accept them, and update delivery statuses live.
 
-```sh
-npx create-turbo@latest
-```
+    The project emphasizes **real-time communication**, **secure authentication**, and **scalable backend APIs**.
 
-## What's inside?
+## Table of Contents
 
-This Turborepo includes the following packages/apps:
+- [Demo](#demo)
+- [Overview](#overview)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Technologies Used](#technologies-used)
 
-### Apps and Packages
+##  Live Links
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+- **WebSocket Backend** (Server): [https://zappy-2hxn.onrender.com](https://zappy-2hxn.onrender.com)
+- **Frontend + API Backend** (Next.js Monorepo): [https://zappy-frontend.onrender.com](https://zappy-frontend.onrender.com)
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+## Demo
 
-### Utilities
+- You can check out a [demo of the project here](https://drive.google.com/file/d/1WDpEGv4RkccCU3yoPFtnFuL5Nny04_sI/view?usp=sharing).
 
-This Turborepo has some additional tools already setup for you:
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+## Features
 
-### Build
+- **JWT Authentication:** Secure login system for both Customers and Delivery Partners.
+- **Order Placement:** Customers can place orders by specifying product ID, quantity, and delivery location.
+- **Live Order Tracking:** Orders move through status stages: `Pending` → `Accepted` → `Out for Delivery` → `Delivered`.
+- **Real-Time Updates:** Instant delivery status updates using WebSockets (Socket.io).
+- **Delivery Partner Dashboard:** Accept and update orders from a centralized dashboard.
 
-To build all apps and packages, run the following command:
+## Project Structure
+## 📁 Project Structure
 
-```
-cd my-turborepo
-pnpm build
-```
+```bash
+Zappy/
+├── apps/
+│   ├── frontend/               # Next.js app (UI + API routes)
+│   │       ├──src 
+|   |           ├──             # App routes and API handlers
+│   │           ├── components/         # Reusable UI components
+│   │           ├── lib/                # Utility functions and shared logic
+│   │           ├── styles/             # Global styles
+│   │           ├── public/             # Static files (e.g. images)
+│   │           ├── .env                # Frontend-specific env variables
+│   │           └── next.config.js      # Next.js config
+│   │
+│   └── server/                 # WebSocket backend (Node.js + Socket.io)
+│       ├── services/
+│       │   └── socket.ts       # Socket initialization and handlers
+│       ├── index.ts            # WebSocket server entry point
+│       └── .env                # Server-specific env variables
+│
+├── .env                        # Root environment variables
+├── package.json                # Root package definition for monorepo
+├── README.md                   # Project documentation
+└── .gitignore                  # Git ignore rules
 
-### Develop
 
-To develop all apps and packages, run the following command:
+## Prerequisites
 
-```
-cd my-turborepo
-pnpm dev
-```
+Ensure you have the following installed:
 
-### Remote Caching
+- Node.js ≥ 18.x
+- npm ≥ 9.x
+- PostgreSQL (or use a remote DB like Neon)
+- Git
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+---
 
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+## Local Setup Instructions
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/adityakanthe10/Zappy
+   cd Zappy 
+   ```
 
-```
-cd my-turborepo
-npx turbo login
-```
+2. **Install dependencies for all apps**
+    ```
+    npm install
+    ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+3. **Set up environment variables**
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+    ###  Root .env
+    - Create a .env file in the root directory:
+    ```
+    JWT_SECRET="mysecretkey"
+    NEXT_PUBLIC_API_URL=http://localhost:3000/api
+    NEXT_PUBLIC_WS_URL=ws://localhost:8000
+    DATABASE_URL="postgresql://neondb_owner:npg_9cZ5jHzKwuda@ep-polished-silence-a1utw3yy-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
+    ```
 
-```
-npx turbo link
-```
+    ###  Inside apps/frontend/.env
+    ```
+    JWT_SECRET="mysecretkey"
+    NEXT_PUBLIC_API_URL=http://localhost:3000
+    NEXT_PUBLIC_WS_URL=ws://localhost:8000
+    ```
 
-## Useful Links
+    ### Inside apps/server/.env
 
-Learn more about the power of Turborepo:
+    ```
+    PORT=8000
+    FRONTEND_URL=http://localhost:3000
+    ```
+4. Run apps
 
-- [Tasks](https://turbo.build/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/docs/reference/command-line-reference)
+    - Root repository :- 
+    ```
+    npm run dev
+    ```
+## Usage
+
+### Placing Orders (Customer Flow)
+
+1. Register or log in as a **Customer** from the homepage.
+2. It will route to place order page.
+3. Place an order and redirect to the "My Orders" section.
+4. You will receive **real-time updates** on your order status via WebSockets.
+
+### Managing Orders (Delivery Flow)
+
+1. Log in as an **Delivery** via the  login page.
+2. View all incoming orders in the Admin Dashboard.
+3. Change the status of an order (e.g., `"Preparing"`, `"Accepted"`).
+4. The corresponding customer will receive **live notifications** as soon as the status is updated.
+
+###  Real-time Updates (Socket.io)
+
+- Real-time communication is handled via a dedicated WebSocket server.
+- Customers automatically join a unique room based on their user ID.
+- Delivery status updates are instantly pushed to the respective customer.
+
+
+## Technologies Used
+
+- Frontend: Next.js, CSS
+- Backend: Node.js, Next.js, websockets
+- Database: Postgresql
