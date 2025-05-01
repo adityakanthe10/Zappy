@@ -19,7 +19,7 @@ const PendingOrders = () => {
 
   // Initialize socket connection
   useEffect(() => {
-    const newSocket = io(`${process.env.NEXT_PUBLIC_WS_UR}`);
+    const newSocket = io(`${process.env.NEXT_PUBLIC_WS_URL}`);
     setSocket(newSocket);
 
     newSocket.on("orderStatusUpdated", (data) => {

@@ -11,7 +11,7 @@ async function startServer() {
   initSocket(httpServer);
 
   // Define the port (from .env or default to 8000)
-  const PORT = process.env.PORT || 8000;
+  const PORT = process.env.NEXT_PUBLIC_WS_URL || 8000;
 
   // Start listening on the port
   httpServer.listen(PORT, () => {

@@ -3,75 +3,98 @@ import jwt from "jsonwebtoken";
 import { prisma } from "@repo/db";
 import { NextRequest, NextResponse } from "next/server";
 
+const allowedOrigin = "https://zappy-frontend.onrender.com"; // your deployed frontend
+
 export async function POST(req: NextRequest) {
   try {
     const { email, password } = await req.json();
 
-    // Check if email and password are provided
     if (!email || !password) {
-      return NextResponse.json(
-        { error: "Email and password are required." },
-        { status: 400 }
+      return withCORS(
+        NextResponse.json(
+          { error: "Email and password are required." },
+          { status: 400 }
+        )
       );
     }
 
-    // Find user in the database
     const user = await prisma.user.findUnique({ where: { email } });
-    if (!user)
-      return NextResponse.json(
-        { error: "User not found. Signup Please" },
-        { status: 404 }
+    if (!user) {
+      return withCORS(
+        NextResponse.json(
+          { error: "User not found. Signup Please" },
+          { status: 404 }
+        )
       );
+    }
 
-    // Compare provided password with stored hash
     const ok = await bcrypt.compare(password, user.password);
-    if (!ok)
-      return NextResponse.json({ error: "Invalid password." }, { status: 401 });
-
-    // Check if JWT_SECRET is set in environment variables
-    if (!process.env.JWT_SECRET)
-      return NextResponse.json(
-        { error: "JWT_SECRET not set." },
-        { status: 500 }
+    if (!ok) {
+      return withCORS(
+        NextResponse.json({ error: "Invalid password." }, { status: 401 })
       );
+    }
 
-    // Determine role: user can be CUSTOMER, DELIVERY, or ADMIN
+    if (!process.env.JWT_SECRET) {
+      return withCORS(
+        NextResponse.json({ error: "JWT_SECRET not set." }, { status: 500 })
+      );
+    }
+
     const role = user.role as "CUSTOMER" | "DELIVERY" | "ADMIN";
 
-    // Generate JWT token with a 2-hour expiration
     const token = jwt.sign({ userId: user.id, role }, process.env.JWT_SECRET, {
       expiresIn: "2h",
     });
 
-    // Set cookies for token and role, with 2 hours expiration
     const res = NextResponse.json(
       {
         message: "Login successful",
-        token, // JWT token
-        role, // User role (can be CUSTOMER, DELIVERY, or ADMIN)
+        token,
+        role,
       },
       { status: 200 }
     );
 
-    // Set cookies using `NextResponse.cookies.set`
     res.cookies.set("token", token, {
       httpOnly: true,
-      maxAge: 2 * 60 * 60 * 1000,
+      maxAge: 2 * 60 * 60,
       path: "/",
-      sameSite: "none",  // Ensure cookies can be shared across different origins
-      secure: process.env.NODE_ENV === "production"
-    });
-    res.cookies.set("role", role, {
-      httpOnly: true,
-      maxAge: 2 * 60 * 60 * 1000,
-      path: "/",
-      sameSite: "none",  // Ensure cookies can be shared across different origins
-      secure: process.env.NODE_ENV === "production", 
+      sameSite: "none",
+      secure: process.env.NODE_ENV === "production",
     });
 
-    return res;
+    res.cookies.set("role", role, {
+      httpOnly: true,
+      maxAge: 2 * 60 * 60,
+      path: "/",
+      sameSite: "none",
+      secure: process.env.NODE_ENV === "production",
+    });
+
+    return withCORS(res);
   } catch (err) {
     console.error("Login error:", err);
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    return withCORS(
+      NextResponse.json({ error: "Server error" }, { status: 500 })
+    );
   }
+}
+
+// Handle preflight request (very important)
+export function OPTIONS() {
+  const res = new NextResponse(null, { status: 204 });
+  return withCORS(res);
+}
+
+// Helper function to add CORS headers
+function withCORS(res: NextResponse) {
+  res.headers.set("Access-Control-Allow-Origin", allowedOrigin);
+  res.headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.headers.set(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization"
+  );
+  res.headers.set("Access-Control-Allow-Credentials", "true");
+  return res;
 }

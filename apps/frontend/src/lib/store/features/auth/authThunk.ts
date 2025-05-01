@@ -19,10 +19,14 @@ export const loginUser = createAsyncThunk<
   LoginResponse,
   { email: string; password: string }
 >("auth/loginUser", async ({ email, password }) => {
-  const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/v1/auth/login`, {
-    email,
-    password,
-  });
+  const response = await axios.post(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/login`,
+    {
+      email,
+      password,
+    },
+    { withCredentials: true }
+  );
   return response.data;
 });
 
@@ -41,7 +45,8 @@ export const registerUser = createAsyncThunk<
           email,
           password,
           role,
-        }
+        },
+        { withCredentials: true }
       );
       return response.data;
     } catch (error: unknown) {

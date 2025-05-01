@@ -26,7 +26,7 @@ export default function OrderListPage() {
   }, [id, dispatch]);
 
   useEffect(() => {
-    const socket = io(`${process.env.NEXT_PUBLIC_WS_UR}`);
+    const socket = io(`${process.env.NEXT_PUBLIC_WS_URL}`);
 
     // Join the user's room on connection
     if (id) {
