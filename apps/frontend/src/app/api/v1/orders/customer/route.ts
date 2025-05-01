@@ -1,3 +1,8 @@
+export const runtime = 'nodejs'; // 👈 Add this
+// import jwt from 'jsonwebtoken';
+// your existing code...
+
+
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { prisma } from "@repo/db";
