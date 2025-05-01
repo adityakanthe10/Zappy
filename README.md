@@ -37,19 +37,18 @@ Zappy is a full-stack web application that simulates a **Quick Commerce Order & 
 - **Delivery Partner Dashboard:** Accept and update orders from a centralized dashboard.
 
 ## Project Structure
-## 📁 Project Structure
 
 ```bash
 Zappy/
 ├── apps/
-│   ├── frontend/               # Next.js app (UI + API routes)
+│   ├── frontend/                   # Next.js app (UI + API routes)
+│   │       ├── public/             # Static files (e.g. images)
+│   │       ├── .env                # Frontend-specific env variables
 │   │       ├──src 
-|   |           ├──             # App routes and API handlers
+|   |           ├── app/                # App routes and API handlers
 │   │           ├── components/         # Reusable UI components
 │   │           ├── lib/                # Utility functions and shared logic
 │   │           ├── styles/             # Global styles
-│   │           ├── public/             # Static files (e.g. images)
-│   │           ├── .env                # Frontend-specific env variables
 │   │           └── next.config.js      # Next.js config
 │   │
 │   └── server/                 # WebSocket backend (Node.js + Socket.io)
@@ -60,9 +59,13 @@ Zappy/
 │
 ├── .env                        # Root environment variables
 ├── package.json                # Root package definition for monorepo
+├── packages                    # packages
+│       ├── auth
+│       ├── db                  # database postgresqsl
+│       ├── ui                  # ui 
 ├── README.md                   # Project documentation
 └── .gitignore                  # Git ignore rules
-
+```
 
 ## Prerequisites
 
