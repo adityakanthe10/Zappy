@@ -1,5 +1,16 @@
 # Zappy – Quick Commerce & Delivery Tracking System
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Live](#live_links)
+- [Demo](#demo)
+- [Features](#features)
+- [Project Strucuter](#project-structure)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Technologies Used](#technologies-used)
+
 ## Overview
 
 Zappy is a full-stack web application that simulates a **Quick Commerce Order & Delivery Tracking System**, built using **Next.js**, **Node.js**, **PostgreSQL**, and **Socket.io**. It enables two roles:
@@ -9,16 +20,8 @@ Zappy is a full-stack web application that simulates a **Quick Commerce Order & 
 
     The project emphasizes **real-time communication**, **secure authentication**, and **scalable backend APIs**.
 
-## Table of Contents
 
-- [Demo](#demo)
-- [Overview](#overview)
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Technologies Used](#technologies-used)
-
-##  Live Links
+## Live_Links
 
 - **WebSocket Backend** (Server): [https://zappy-2hxn.onrender.com](https://zappy-2hxn.onrender.com)
 - **Frontend + API Backend** (Next.js Monorepo): [https://zappy-frontend.onrender.com](https://zappy-frontend.onrender.com)
@@ -36,7 +39,7 @@ Zappy is a full-stack web application that simulates a **Quick Commerce Order & 
 - **Real-Time Updates:** Instant delivery status updates using WebSockets (Socket.io).
 - **Delivery Partner Dashboard:** Accept and update orders from a centralized dashboard.
 
-## Project Structure
+## Project-Structure
 
 ```bash
 Zappy/
@@ -67,18 +70,9 @@ Zappy/
 └── .gitignore                  # Git ignore rules
 ```
 
-## Prerequisites
 
-Ensure you have the following installed:
-
-- Node.js ≥ 18.x
-- npm ≥ 9.x
-- PostgreSQL (or use a remote DB like Neon)
-- Git
-
----
-
-## Local Setup Instructions
+## Installation
+### Local Setup Installation
 
 1. **Clone the repository**
    ```bash
